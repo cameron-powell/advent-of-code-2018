@@ -143,7 +143,6 @@ class Grid:
         radius = int(ceil(10000/len(coordinates)))
         return (smallest_x-radius, largest_x+radius, smallest_y-radius, largest_y+radius)
 
-
     def get_finite_coordinates(self, coordinates):
         """ Creates a list of coordinates which are contained in a finite area
             within the grid """
