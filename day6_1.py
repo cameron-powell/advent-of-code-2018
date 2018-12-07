@@ -37,6 +37,27 @@ class Coordinate:
         y_diff = abs(self.y_coord - other.y_coord)
         return x_diff + y_diff
 
+    @staticmethod
+    def closest_manhattan(to_coord, coordinates):
+        """ Calculates which coordinate in a given list of coordinates is closest
+            to the coordinate passed in """
+        # Set the initial values to compare against using the first value in coordinates
+        closest_coordinate = coordinates[0]
+        closest_coordinate_dist = closest_coordinate.manhattan_distance(to_coord)
+        tied = False
+        # Search for the closest coordinate
+        for coord in coordinates[1:]:
+            # Get the manhattan distance between these coordinates
+            dist_between = coord.manhattan_distance(to_coord)
+            # Update the newest closest coordinate if current coord is closer
+            if dist_between < closest_coordinate_dist:
+                tied = False
+                closest_coordinate = coord
+                closest_coordinate_dist = dist_between
+            elif dist_between == closest_coordinate_dist:
+                tied = True
+        return Coordinate('-1,-1') if tied else closest_coordinate
+
 
 class Grid:
     """ A grid class for containing the grid structure and metadata and
@@ -61,7 +82,7 @@ class Grid:
             for y_dim in range(sm_y, lg_y+1):
                 # Set each value to be the closest coordinate
                 closest = Coordinate('%s,%s' % (x_dim, y_dim))
-                grid[x_dim][y_dim] = closest_manhattan(closest, coordinates)
+                grid[x_dim][y_dim] = Coordinate.closest_manhattan(closest, coordinates)
         return cls((sm_x, sm_y, lg_x, lg_y), grid)
 
     @staticmethod
@@ -114,25 +135,7 @@ class Grid:
         return largest_area
 
 
-def closest_manhattan(to_coord, coordinates):
-    """ Calculates which coordinate in a given list of coordinates is closest
-        to the coordinate passed in """
-    # Set the initial values to compare against using the first value in coordinates
-    closest_coordinate = coordinates[0]
-    closest_coordinate_dist = closest_coordinate.manhattan_distance(to_coord)
-    tied = False
-    # Search for the closest coordinate
-    for coord in coordinates[1:]:
-        # Get the manhattan distance between these coordinates
-        dist_between = coord.manhattan_distance(to_coord)
-        # Update the newest closest coordinate if current coord is closer
-        if dist_between < closest_coordinate_dist:
-            tied = False
-            closest_coordinate = coord
-            closest_coordinate_dist = dist_between
-        elif dist_between == closest_coordinate_dist:
-            tied = True
-    return Coordinate('-1,-1') if tied else closest_coordinate
+
 
 
 if __name__ == '__main__':
