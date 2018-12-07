@@ -135,9 +135,6 @@ class Grid:
         return largest_area
 
 
-
-
-
 if __name__ == '__main__':
     # Read in the coordinates
     with open('day6.txt') as coordinates_file:
