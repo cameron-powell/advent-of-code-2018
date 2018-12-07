@@ -1,6 +1,7 @@
 """ day6_1.py -> This module solves the first problem of the sixth day
     for the advent of code 2018 """
 
+
 class Coordinate:
     """ A coordinate class for getting part or all of a coordinate.
         also contains helper functions for working with coordinates """
@@ -35,6 +36,7 @@ class Coordinate:
         x_diff = abs(self.x_coord - other.x_coord)
         y_diff = abs(self.y_coord - other.y_coord)
         return x_diff + y_diff
+
 
 class Grid:
     """ A grid class for containing the grid structure and metadata and
