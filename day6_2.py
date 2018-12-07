@@ -1,6 +1,6 @@
 """ day6_2.py -> This module solves the second problem of the sixth day
     for the advent of code 2018 """
-
+from math import ceil
 
 class Coordinate:
     """ A coordinate class for getting part or all of a coordinate.
@@ -58,6 +58,12 @@ class Coordinate:
                 tied = True
         return Coordinate('-1,-1') if tied else closest_coordinate
 
+    @staticmethod
+    def total_manhattan_distance(from_coord, to_coords):
+        """ Calculates the total manhattan distance from a given coordinate
+            to all other coordinates """
+        return sum([coord.manhattan_distance(from_coord) for coord in to_coords])
+
 
 class Grid:
     """ A grid class for containing the grid structure and metadata and
@@ -86,6 +92,25 @@ class Grid:
         return cls((sm_x, sm_y, lg_x, lg_y), grid)
 
     @staticmethod
+    def manhattan_region_all_coords(coordinates):
+        """ Calculates the size of the region containing all locations with a total
+            manhattan distance of less than 10k """
+        # Get the shape of the grid
+        sm_x, lg_x, sm_y, lg_y = Grid.grid_shape2(coordinates)
+        # Calculate the area within a total manhattan distance of 10k
+        area = 0
+        # Check each spot
+        for x_dim in range(sm_x, lg_x+1):
+            for y_dim in range(sm_y, lg_y+1):
+                # Calculate total distance at current spot
+                current = Coordinate('%s,%s' % (x_dim, y_dim))
+                total_dist = Coordinate.total_manhattan_distance(current, coordinates)
+                # Increment area if within the alotted total distance
+                if total_dist < 10000:
+                    area += 1
+        return area
+
+    @staticmethod
     def grid_shape(coordinates):
         """ Gets the smallest and largest values for X and Y in a list of
             coordinates and returns them in a tuple """
@@ -100,6 +125,24 @@ class Grid:
             largest_y = coordinate.y_coord if coordinate.y_coord > largest_y else largest_y
         # Return the results
         return (smallest_x, largest_x, smallest_y, largest_y)
+
+    @staticmethod
+    def grid_shape2(coordinates):
+        """ Gets the smallest and largest values for X and Y in a list coordinates
+            and uses them to calculate the size of the grid """
+        # Define initial values based on the first coordinate
+        smallest_x, largest_x = (coordinates[0].x_coord, coordinates[0].x_coord)
+        smallest_y, largest_y = (coordinates[0].y_coord, coordinates[0].y_coord)
+        # Search for the true values
+        for coordinate in coordinates:
+            smallest_x = coordinate.x_coord if coordinate.x_coord < smallest_x else smallest_x
+            largest_x = coordinate.x_coord if coordinate.x_coord > largest_x else largest_x
+            smallest_y = coordinate.y_coord if coordinate.y_coord < smallest_y else smallest_y
+            largest_y = coordinate.y_coord if coordinate.y_coord > largest_y else largest_y
+        # Return the results
+        radius = int(ceil(10000/len(coordinates)))
+        return (smallest_x-radius, largest_x+radius, smallest_y-radius, largest_y+radius)
+
 
     def get_finite_coordinates(self, coordinates):
         """ Creates a list of coordinates which are contained in a finite area
@@ -139,4 +182,5 @@ if __name__ == '__main__':
     # Read in the coordinates
     with open('day6.txt') as coordinates_file:
         COORDINATES = [Coordinate(coord_string) for coord_string in coordinates_file]
- 
+    # Calculate the area where the total manhattan distance at each spot < 10k
+    print(Grid.manhattan_region_all_coords(COORDINATES))
